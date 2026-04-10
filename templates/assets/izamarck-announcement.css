@@ -1,0 +1,60 @@
+/* ========================================
+   IZAMARCK ANNOUNCEMENT BAR STYLES
+   ======================================== */
+
+.izm-announcement-bar {
+  background-color: var(--izm-black);
+  color: var(--izm-white);
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  letter-spacing: 0.025em;
+}
+
+.izm-announcement-bar__btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease;
+}
+
+.izm-announcement-bar__btn:hover {
+  color: var(--izm-white);
+}
+
+.izm-announcement-bar__btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.izm-announcement-bar__text {
+  text-align: center;
+  flex: 1;
+  margin: 0 1rem;
+}
+
+.izm-announcement-bar__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.izm-announcement-bar__close {
+  margin-left: 0.5rem;
+}
+
+.izm-announcement-bar__close svg {
+  width: 14px;
+  height: 14px;
+}
+
+.izm-announcement-bar.hidden {
+  display: none;
+}

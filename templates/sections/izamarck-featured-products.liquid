@@ -1,0 +1,169 @@
+{{ 'izamarck-products.css' | asset_url | stylesheet_tag }}
+
+{% assign collection_handle = section.settings.collection %}
+{% if collection_handle == blank %}
+  {% assign products_list = collections.all.products %}
+{% else %}
+  {% assign products_list = collections[collection_handle].products %}
+{% endif %}
+
+{% assign products_to_show = section.settings.products_to_show | default: 4 %}
+
+<section class="izm-products">
+  <div class="izm-products__container">
+    {% if section.settings.title != blank %}
+      <div class="izm-products__header">
+        <h2 class="izm-products__title">{{ section.settings.title }}</h2>
+        {% if section.settings.subtitle != blank %}
+          <p class="izm-products__subtitle">{{ section.settings.subtitle }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if products_list.size > 0 %}
+      <div class="izm-products__grid">
+        {% for product in products_list limit: products_to_show %}
+          <a href="{{ product.url }}" class="izm-product-card">
+            <div class="izm-product-card__image-wrapper">
+              {% if product.featured_image %}
+                {{ product.featured_image | image_url: width: 600 | image_tag: 
+                  class: 'izm-product-card__image',
+                  loading: 'lazy',
+                  alt: product.title
+                }}
+              {% else %}
+                <img 
+                  src="{{ 'product-placeholder.svg' | asset_url }}"
+                  alt="{{ product.title }}"
+                  class="izm-product-card__image"
+                  loading="lazy"
+                >
+              {% endif %}
+
+              {% if product.available == false %}
+                <span class="izm-product-card__badge">Agotado</span>
+              {% elsif product.compare_at_price > product.price %}
+                <span class="izm-product-card__badge izm-product-card__badge--sale">Sale</span>
+              {% endif %}
+
+              <button class="izm-product-card__quick-add" onclick="quickAdd(event, {{ product.variants.first.id }})">
+                Añadir al carrito
+              </button>
+            </div>
+
+            <div class="izm-product-card__info">
+              {% if product.type != blank %}
+                <p class="izm-product-card__category">{{ product.type }}</p>
+              {% endif %}
+              
+              <h3 class="izm-product-card__title">{{ product.title }}</h3>
+              
+              <div class="izm-product-card__price">
+                <span class="izm-product-card__price-current {% if product.compare_at_price > product.price %}izm-product-card__price-sale{% endif %}">
+                  {{ product.price | money }}
+                </span>
+                {% if product.compare_at_price > product.price %}
+                  <span class="izm-product-card__price-original">
+                    {{ product.compare_at_price | money }}
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+
+      {% if section.settings.show_view_all and collection_handle != blank %}
+        <div style="text-align: center; margin-top: 2rem;">
+          <a href="/collections/{{ collection_handle }}" class="btn btn-outline">
+            Ver todos
+          </a>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="izm-products__empty">
+        <h3 class="izm-products__empty-title">No hay productos disponibles</h3>
+        <p class="izm-products__empty-text">Vuelve pronto para ver nuestras nuevas colecciones.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+  function quickAdd(event, variantId) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: 1
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Update cart count
+      fetch('/cart.js')
+        .then(res => res.json())
+        .then(cart => {
+          document.dispatchEvent(new CustomEvent('cart:update', { detail: { cart } }));
+          updateCartCount(cart.item_count);
+        });
+      
+      // Show notification
+      alert('Producto añadido al carrito');
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error al añadir al carrito');
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Izamarck Featured Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured Products"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "label": "Products to show",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View all' button",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Izamarck Featured Products"
+    }
+  ]
+}
+{% endschema %}

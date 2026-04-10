@@ -1,0 +1,24 @@
+{
+  "name": "Header Group",
+  "type": "header",
+  "sections": {
+    "announcement-bar": {
+      "type": "izamarck-announcement-bar",
+      "settings": {
+        "announcement_1": "Haz tu pedido ¡Ya!",
+        "announcement_2": "Envío gratis en compras mayores a $80",
+        "announcement_3": "Nuevas colecciones disponibles ahora"
+      }
+    },
+    "header": {
+      "type": "izamarck-header",
+      "settings": {
+        "menu": "main-menu"
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "header"
+  ]
+}

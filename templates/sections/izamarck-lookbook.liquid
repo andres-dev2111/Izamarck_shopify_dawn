@@ -1,0 +1,201 @@
+{{ 'izamarck-lookbook.css' | asset_url | stylesheet_tag }}
+
+<section class="izm-lookbook">
+  <div class="izm-lookbook__container">
+    <div class="izm-lookbook__header">
+      <p class="izm-lookbook__badge">{{ section.settings.badge | default: 'Comunidad' }}</p>
+      <h2 class="izm-lookbook__title">{{ section.settings.title | default: 'Lookbook' }}</h2>
+      <p class="izm-lookbook__subtitle">{{ section.settings.subtitle | default: 'Toca cualquier imagen para ver los productos del outfit' }}</p>
+    </div>
+
+    {% if section.blocks.size > 0 %}
+      <div class="izm-lookbook__grid">
+        {% for block in section.blocks %}
+          <div class="izm-lookbook__item" {{ block.shopify_attributes }}>
+            <a href="{{ block.settings.look_link }}" class="izm-look-card {% if block.settings.tall %}izm-look-card--tall{% else %}izm-look-card--normal{% endif %}">
+              {% if block.settings.look_image != blank %}
+                {{ block.settings.look_image | image_url: width: 800 | image_tag: 
+                  class: 'izm-look-card__image',
+                  loading: 'lazy',
+                  alt: block.settings.look_title
+                }}
+              {% else %}
+                <img 
+                  src="{{ 'placeholder.svg' | asset_url }}"
+                  alt="{{ block.settings.look_title }}"
+                  class="izm-look-card__image"
+                  loading="lazy"
+                >
+              {% endif %}
+
+              <div class="izm-look-card__overlay"></div>
+
+              {% if block.settings.look_tag != blank %}
+                <div class="izm-look-card__tag">
+                  <span class="izm-look-card__tag-text">{{ block.settings.look_tag }}</span>
+                </div>
+              {% endif %}
+
+              <div class="izm-look-card__bottom">
+                {% if block.settings.look_handle != blank %}
+                  <p class="izm-look-card__handle">{{ block.settings.look_handle }}</p>
+                {% endif %}
+                <div class="izm-look-card__cta">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                  <span class="izm-look-card__cta-text">Conseguir Look</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if section.settings.show_instagram_cta %}
+        <div class="izm-lookbook__cta">
+          <p class="izm-lookbook__cta-text">{{ section.settings.cta_text | default: '¿Usas nuestras prendas? Etiquétanos' }}</p>
+          <a href="{{ section.settings.instagram_url }}" class="izm-lookbook__cta-btn" target="_blank" rel="noopener">
+            {{ section.settings.cta_button_text | default: '@IZAMARCK en Instagram' }}
+          </a>
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Izamarck Lookbook",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge Text",
+      "default": "Comunidad"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Lookbook"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Toca cualquier imagen para ver los productos del outfit"
+    },
+    {
+      "type": "header",
+      "content": "Instagram CTA"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_instagram_cta",
+      "label": "Show Instagram CTA",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Text",
+      "default": "¿Usas nuestras prendas? Etiquétanos"
+    },
+    {
+      "type": "text",
+      "id": "cta_button_text",
+      "label": "Button Text",
+      "default": "@IZAMARCK en Instagram"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "look",
+      "name": "Look Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "look_image",
+          "label": "Look Image"
+        },
+        {
+          "type": "text",
+          "id": "look_tag",
+          "label": "Category Tag",
+          "default": "TRENDY"
+        },
+        {
+          "type": "text",
+          "id": "look_handle",
+          "label": "Instagram Handle",
+          "default": "@izamarck.oficial"
+        },
+        {
+          "type": "text",
+          "id": "look_title",
+          "label": "Look Title",
+          "default": "Look Editorial"
+        },
+        {
+          "type": "url",
+          "id": "look_link",
+          "label": "Look Link (Collection/Product)"
+        },
+        {
+          "type": "checkbox",
+          "id": "tall",
+          "label": "Tall Image (2:3 ratio)",
+          "default": false,
+          "info": "Use for vertical/portrait images"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Izamarck Lookbook",
+      "blocks": [
+        {
+          "type": "look",
+          "settings": {
+            "look_tag": "TRENDY",
+            "look_handle": "@izamarck.oficial",
+            "look_title": "Look Trendy Editorial"
+          }
+        },
+        {
+          "type": "look",
+          "settings": {
+            "look_tag": "CASUAL",
+            "look_handle": "@izamarck.looks",
+            "look_title": "Look Urban Casual",
+            "tall": false
+          }
+        },
+        {
+          "type": "look",
+          "settings": {
+            "look_tag": "PARTY",
+            "look_handle": "@izamarck.style",
+            "look_title": "Look Party Night"
+          }
+        },
+        {
+          "type": "look",
+          "settings": {
+            "look_tag": "DENIM",
+            "look_handle": "@izamarck.moda",
+            "look_title": "Look Denim Total"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

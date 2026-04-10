@@ -1,0 +1,214 @@
+{{ 'izamarck-header.css' | asset_url | stylesheet_tag }}
+
+<header class="izm-header" id="izm-header">
+  {%- comment -%} Desktop Header {%- endcomment -%}
+  <div class="izm-header__container">
+    {%- comment -%} Left Navigation - Gender Links {%- endcomment -%}
+    <nav class="izm-header__nav">
+      {% for link in linklists.main-menu.links %}
+        <button 
+          class="izm-header__nav-link {% if link.active %}izm-header__nav-link--active{% endif %}"
+          data-gender="{{ link.title }}"
+          onclick="handleGenderClick('{{ link.title }}', '{{ link.url }}')"
+        >
+          {{ link.title }}
+        </button>
+      {% endfor %}
+    </nav>
+
+    {%- comment -%} Center Logo {%- endcomment -%}
+    <a href="{{ routes.root_url }}" class="izm-header__logo">
+      IZAMARCK
+    </a>
+
+    {%- comment -%} Right Icons {%- endcomment -%}
+    <div class="izm-header__icons">
+      <button 
+        class="izm-header__icon-btn" 
+        aria-label="Buscar"
+        onclick="openSearch()"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+      </button>
+      
+      <button 
+        class="izm-header__icon-btn" 
+        aria-label="Perfil"
+        onclick="openProfile()"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </button>
+      
+      <a 
+        href="{{ routes.cart_url }}" 
+        class="izm-header__icon-btn" 
+        aria-label="Carrito"
+        id="cart-icon"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        <span class="izm-header__cart-badge" id="cart-count" style="{% if cart.item_count == 0 %}display: none;{% endif %}">
+          {{ cart.item_count }}
+        </span>
+      </a>
+    </div>
+  </div>
+
+  {%- comment -%} Mobile Header {%- endcomment -%}
+  <div class="izm-header__mobile">
+    <button 
+      class="izm-header__mobile-menu-btn" 
+      aria-label="Menú"
+      onclick="toggleMobileMenu()"
+      id="mobile-menu-toggle"
+    >
+      <svg id="menu-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+      <svg id="close-icon" class="hidden" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
+    <a href="{{ routes.root_url }}" class="izm-header__mobile-logo">
+      IZAMARCK
+    </a>
+
+    <div class="izm-header__mobile-icons">
+      <button class="izm-header__icon-btn" onclick="openSearch()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+      </button>
+      
+      <a href="{{ routes.cart_url }}" class="izm-header__icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        <span class="izm-header__cart-badge" style="{% if cart.item_count == 0 %}display: none;{% endif %}">
+          {{ cart.item_count }}
+        </span>
+      </a>
+    </div>
+  </div>
+
+  {%- comment -%} Mobile Menu Dropdown {%- endcomment -%}
+  <div id="mobile-menu-dropdown" class="izm-header__mobile-dropdown hidden">
+    <nav class="izm-header__mobile-nav">
+      {% for link in linklists.main-menu.links %}
+        <button 
+          class="izm-header__mobile-nav-link {% if link.active %}izm-header__mobile-nav-link--active{% endif %}"
+          onclick="handleMobileGenderClick('{{ link.title }}', '{{ link.url }}')"
+        >
+          {{ link.title }}
+          {% if link.active %}
+            <span class="izm-header__mobile-nav-active-badge">ACTIVO</span>
+          {% endif %}
+        </button>
+      {% endfor %}
+      
+      <button 
+        class="izm-header__mobile-nav-profile"
+        onclick="closeMobileMenu(); openProfile();"
+      >
+        Mi cuenta
+      </button>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Mobile Menu Toggle
+  function toggleMobileMenu() {
+    const dropdown = document.getElementById('mobile-menu-dropdown');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
+    
+    dropdown.classList.toggle('hidden');
+    menuIcon.classList.toggle('hidden');
+    closeIcon.classList.toggle('hidden');
+  }
+
+  function closeMobileMenu() {
+    const dropdown = document.getElementById('mobile-menu-dropdown');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
+    
+    dropdown.classList.add('hidden');
+    menuIcon.classList.remove('hidden');
+    closeIcon.classList.add('hidden');
+  }
+
+  // Gender Click Handler
+  function handleGenderClick(gender, url) {
+    window.location.href = url;
+  }
+
+  function handleMobileGenderClick(gender, url) {
+    closeMobileMenu();
+    setTimeout(() => {
+      window.location.href = url;
+    }, 100);
+  }
+
+  // Search Overlay
+  function openSearch() {
+    // This will be implemented in the search overlay section
+    console.log('Open search');
+  }
+
+  // Profile Sidebar
+  function openProfile() {
+    // This will be implemented in the profile sidebar section
+    window.location.href = '{{ routes.account_url }}';
+  }
+
+  // Update cart count dynamically
+  function updateCartCount(count) {
+    const cartBadges = document.querySelectorAll('#cart-count');
+    cartBadges.forEach(badge => {
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    });
+  }
+
+  // Listen for cart updates
+  document.addEventListener('cart:update', function(event) {
+    if (event.detail && event.detail.cart) {
+      updateCartCount(event.detail.cart.item_count);
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Izamarck Header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "Menu"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,105 @@
+{{ 'izamarck-announcement.css' | asset_url | stylesheet_tag }}
+
+<div class="izm-announcement-bar" id="izm-announcement-bar">
+  <button class="izm-announcement-bar__btn" onclick="prevAnnouncement()" aria-label="Anterior">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </button>
+  
+  <div class="izm-announcement-bar__text" id="announcement-text">
+    {% if section.settings.announcement_1 != blank %}
+      {{ section.settings.announcement_1 }}
+    {% else %}
+      Haz tu pedido ¡Ya!
+    {% endif %}
+  </div>
+  
+  <div class="izm-announcement-bar__controls">
+    <button class="izm-announcement-bar__btn" onclick="nextAnnouncement()" aria-label="Siguiente">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+    <button class="izm-announcement-bar__btn izm-announcement-bar__close" onclick="closeAnnouncement()" aria-label="Cerrar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const announcements = [
+      {% if section.settings.announcement_1 != blank %}'{{ section.settings.announcement_1 | escape }}',{% endif %}
+      {% if section.settings.announcement_2 != blank %}'{{ section.settings.announcement_2 | escape }}',{% endif %}
+      {% if section.settings.announcement_3 != blank %}'{{ section.settings.announcement_3 | escape }}',{% endif %}
+    ].filter(Boolean);
+    
+    if (announcements.length === 0) {
+      announcements.push('Haz tu pedido ¡Ya!');
+    }
+    
+    let currentIndex = 0;
+    
+    window.prevAnnouncement = function() {
+      currentIndex = (currentIndex - 1 + announcements.length) % announcements.length;
+      updateAnnouncement();
+    };
+    
+    window.nextAnnouncement = function() {
+      currentIndex = (currentIndex + 1) % announcements.length;
+      updateAnnouncement();
+    };
+    
+    window.closeAnnouncement = function() {
+      document.getElementById('izm-announcement-bar').style.display = 'none';
+      sessionStorage.setItem('izm-announcement-hidden', 'true');
+    };
+    
+    function updateAnnouncement() {
+      const textEl = document.getElementById('announcement-text');
+      if (textEl && announcements[currentIndex]) {
+        textEl.textContent = announcements[currentIndex];
+      }
+    }
+    
+    // Check if announcement was previously hidden in this session
+    if (sessionStorage.getItem('izm-announcement-hidden') === 'true') {
+      document.getElementById('izm-announcement-bar').style.display = 'none';
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Izamarck Announcement Bar",
+  "settings": [
+    {
+      "type": "text",
+      "id": "announcement_1",
+      "label": "Announcement 1",
+      "default": "Haz tu pedido ¡Ya!"
+    },
+    {
+      "type": "text",
+      "id": "announcement_2",
+      "label": "Announcement 2",
+      "default": "Envío gratis en compras mayores a $80"
+    },
+    {
+      "type": "text",
+      "id": "announcement_3",
+      "label": "Announcement 3",
+      "default": "Nuevas colecciones disponibles ahora"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Izamarck Announcement Bar"
+    }
+  ]
+}
+{% endschema %}

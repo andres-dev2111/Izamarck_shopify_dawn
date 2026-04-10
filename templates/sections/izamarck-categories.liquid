@@ -1,0 +1,132 @@
+{{ 'izamarck-categories.css' | asset_url | stylesheet_tag }}
+
+<section class="izm-categories">
+  <div class="izm-categories__grid">
+    {% for block in section.blocks %}
+      <a 
+        href="{{ block.settings.category_link }}" 
+        class="izm-categories__item"
+        {{ block.shopify_attributes }}
+      >
+        {% if block.settings.category_image != blank %}
+          {{ block.settings.category_image | image_url: width: 800 | image_tag: 
+            class: 'izm-categories__image',
+            loading: 'lazy',
+            alt: block.settings.category_name
+          }}
+        {% else %}
+          <img 
+            src="{{ 'placeholder.svg' | asset_url }}"
+            alt="{{ block.settings.category_name }}"
+            class="izm-categories__image"
+            loading="lazy"
+          >
+        {% endif %}
+        
+        <div class="izm-categories__gradient"></div>
+        
+        {% if block.settings.category_label != blank %}
+          <div class="izm-categories__badge">
+            {{ block.settings.category_label }}
+          </div>
+        {% endif %}
+        
+        <div class="izm-categories__info">
+          {% if block.settings.category_sub != blank %}
+            <p class="izm-categories__sub">{{ block.settings.category_sub }}</p>
+          {% endif %}
+          
+          {% if block.settings.category_name != blank %}
+            <p class="izm-categories__name">{{ block.settings.category_name }}</p>
+          {% endif %}
+          
+          <span class="izm-categories__cta">
+            Ver colección →
+          </span>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Izamarck Categories",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "category_image",
+          "label": "Category Image"
+        },
+        {
+          "type": "text",
+          "id": "category_label",
+          "label": "Category Label (Badge)",
+          "default": "Hombre"
+        },
+        {
+          "type": "text",
+          "id": "category_sub",
+          "label": "Subcategory",
+          "default": "BÁSICOS"
+        },
+        {
+          "type": "text",
+          "id": "category_name",
+          "label": "Category Name",
+          "default": "Camiseta Essential"
+        },
+        {
+          "type": "url",
+          "id": "category_link",
+          "label": "Category Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Izamarck Categories",
+      "blocks": [
+        {
+          "type": "category",
+          "settings": {
+            "category_label": "Hombre",
+            "category_sub": "BÁSICOS",
+            "category_name": "Camiseta Essential"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "category_label": "Mujer",
+            "category_sub": "VESTIDOS",
+            "category_name": "Vestido Midi Elegante"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "category_label": "Hombre",
+            "category_sub": "BUZOS",
+            "category_name": "Hoodie Oversize"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "category_label": "Mujer",
+            "category_sub": "CONJUNTOS",
+            "category_name": "Conjunto Satinado"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

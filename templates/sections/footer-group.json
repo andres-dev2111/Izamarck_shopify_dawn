@@ -1,0 +1,59 @@
+{
+  "name": "Footer Group",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "izamarck-footer",
+      "blocks": {
+        "column_1": {
+          "type": "column",
+          "settings": {
+            "title": "Sobre la Marca",
+            "link_1_text": "Sobre Nosotros",
+            "link_2_text": "Nuestra Historia",
+            "link_3_text": "Cultura IZAMARCK",
+            "link_4_text": "Trabaja con Nosotros",
+            "link_5_text": "La Vida en IZAMARCK"
+          }
+        },
+        "column_2": {
+          "type": "column",
+          "settings": {
+            "title": "Ayuda",
+            "link_1_text": "Cambios, Devoluciones y Garantías",
+            "link_2_text": "Términos y Condiciones",
+            "link_3_text": "Política de Envíos",
+            "link_4_text": "Preguntas Frecuentes",
+            "link_5_text": "Escríbenos"
+          }
+        },
+        "column_3": {
+          "type": "column",
+          "settings": {
+            "title": "Contacto",
+            "link_1_text": "NIT: 000.000.000-0",
+            "link_2_text": "WhatsApp: 300 000 00 00",
+            "link_3_text": "PBX: 01 8000 00 00 00",
+            "link_4_text": "Medellín, Colombia",
+            "link_5_text": "contacto@izamarck.com"
+          }
+        }
+      },
+      "block_order": [
+        "column_1",
+        "column_2",
+        "column_3"
+      ],
+      "settings": {
+        "ticker_text": "UNA COMUNIDAD DEDICADA AL DISFRUTE Y RESPETO A LA MODA · IZAMARCK ·",
+        "tagline": "Moda con identidad",
+        "show_newsletter": true,
+        "newsletter_text": "Suscríbete y recibe un 10% en tu primera compra.",
+        "copyright": "© 2026 IZAMARCK®. Todos los derechos reservados."
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

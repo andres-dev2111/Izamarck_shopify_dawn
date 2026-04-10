@@ -1,0 +1,110 @@
+{{ 'izamarck-hero.css' | asset_url | stylesheet_tag }}
+
+<section class="izm-hero">
+  <div class="izm-hero__container">
+    <div class="izm-hero__image-wrapper">
+      {% if section.settings.hero_image != blank %}
+        {{ section.settings.hero_image | image_url: width: 1920 | image_tag: 
+          class: 'izm-hero__image',
+          loading: 'eager',
+          alt: section.settings.hero_title
+        }}
+      {% else %}
+        <img 
+          src="https://images.unsplash.com/photo-1769305171851-897e01aa095c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBkYXJrJTIwYmFja2dyb3VuZCUyMGVkaXRvcmlhbCUyMGx1eHVyeXxlbnwxfHx8fDE3NzU1MTM3MTB8MA&ixlib=rb-4.1.0&q=80&w=1920"
+          alt="{{ section.settings.hero_title }}"
+          class="izm-hero__image"
+          loading="eager"
+        >
+      {% endif %}
+      
+      <div class="izm-hero__overlay"></div>
+      
+      <div class="izm-hero__content">
+        {% if section.settings.hero_badge != blank %}
+          <span class="izm-hero__badge">{{ section.settings.hero_badge }}</span>
+        {% endif %}
+        
+        {% if section.settings.hero_title != blank %}
+          <h1 class="izm-hero__title">{{ section.settings.hero_title }}</h1>
+        {% endif %}
+        
+        {% if section.settings.hero_description != blank %}
+          <p class="izm-hero__description">{{ section.settings.hero_description }}</p>
+        {% endif %}
+        
+        <div class="izm-hero__cta-group">
+          {% if section.settings.cta_primary_text != blank and section.settings.cta_primary_link != blank %}
+            <a href="{{ section.settings.cta_primary_link }}" class="izm-hero__cta-primary">
+              {{ section.settings.cta_primary_text }}
+            </a>
+          {% endif %}
+          
+          {% if section.settings.cta_secondary_text != blank and section.settings.cta_secondary_link != blank %}
+            <a href="{{ section.settings.cta_secondary_link }}" class="izm-hero__cta-secondary">
+              {{ section.settings.cta_secondary_text }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Izamarck Hero Banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero Image"
+    },
+    {
+      "type": "text",
+      "id": "hero_badge",
+      "label": "Badge Text",
+      "default": "Colección 2026"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Hero Title",
+      "default": "Más<br>Vendidos"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_description",
+      "label": "Hero Description",
+      "default": "Descubre los más vendidos que han conquistado a nuestros clientes por su perfecta combinación de funcionalidad y estilo."
+    },
+    {
+      "type": "text",
+      "id": "cta_primary_text",
+      "label": "Primary CTA Text",
+      "default": "Mujer"
+    },
+    {
+      "type": "url",
+      "id": "cta_primary_link",
+      "label": "Primary CTA Link"
+    },
+    {
+      "type": "text",
+      "id": "cta_secondary_text",
+      "label": "Secondary CTA Text",
+      "default": "Hombre"
+    },
+    {
+      "type": "url",
+      "id": "cta_secondary_link",
+      "label": "Secondary CTA Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Izamarck Hero Banner"
+    }
+  ]
+}
+{% endschema %}

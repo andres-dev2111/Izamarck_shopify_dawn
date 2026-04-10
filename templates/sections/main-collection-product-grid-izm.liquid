@@ -1,0 +1,199 @@
+{{ 'izamarck-collection.css' | asset_url | stylesheet_tag }}
+{{ 'izamarck-products.css' | asset_url | stylesheet_tag }}
+
+{% paginate collection.products by 12 %}
+  <div class="izm-collection">
+    <div class="izm-collection__container">
+      {%- comment -%} Collection Header {%- endcomment -%}
+      <div class="izm-collection__header">
+        <h1 class="izm-collection__title">{{ collection.title }}</h1>
+        {% if collection.description != blank %}
+          <div class="izm-collection__description">
+            {{ collection.description }}
+          </div>
+        {% endif %}
+        <p class="izm-collection__count">
+          {{ collection.products_count }} {% if collection.products_count == 1 %}producto{% else %}productos{% endif %}
+        </p>
+      </div>
+
+      {%- comment -%} Filters Bar {%- endcomment -%}
+      <div class="izm-collection__filters">
+        <div class="izm-collection__filter-group">
+          <span class="izm-collection__filter-label">Ordenar por:</span>
+          <form class="izm-collection__sort-form">
+            <select 
+              name="sort_by" 
+              class="izm-collection__filter-select"
+              onchange="this.closest('form').submit()"
+            >
+              <option value="manual" {% if collection.sort_by == 'manual' %}selected{% endif %}>Destacados</option>
+              <option value="best-selling" {% if collection.sort_by == 'best-selling' %}selected{% endif %}>Más vendidos</option>
+              <option value="title-ascending" {% if collection.sort_by == 'title-ascending' %}selected{% endif %}>A-Z</option>
+              <option value="title-descending" {% if collection.sort_by == 'title-descending' %}selected{% endif %}>Z-A</option>
+              <option value="price-ascending" {% if collection.sort_by == 'price-ascending' %}selected{% endif %}>Precio: Menor a mayor</option>
+              <option value="price-descending" {% if collection.sort_by == 'price-descending' %}selected{% endif %}>Precio: Mayor a menor</option>
+              <option value="created-descending" {% if collection.sort_by == 'created-descending' %}selected{% endif %}>Más reciente</option>
+            </select>
+          </form>
+        </div>
+      </div>
+
+      {%- comment -%} Products Grid {%- endcomment -%}
+      {% if collection.products.size > 0 %}
+        <div class="izm-products__grid">
+          {% for product in collection.products %}
+            <a href="{{ product.url }}" class="izm-product-card">
+              <div class="izm-product-card__image-wrapper">
+                {% if product.featured_image %}
+                  {{ product.featured_image | image_url: width: 600 | image_tag: 
+                    class: 'izm-product-card__image',
+                    loading: 'lazy',
+                    alt: product.title
+                  }}
+                {% else %}
+                  <img 
+                    src="{{ 'product-placeholder.svg' | asset_url }}"
+                    alt="{{ product.title }}"
+                    class="izm-product-card__image"
+                    loading="lazy"
+                  >
+                {% endif %}
+
+                {% if product.available == false %}
+                  <span class="izm-product-card__badge">Agotado</span>
+                {% elsif product.compare_at_price > product.price %}
+                  <span class="izm-product-card__badge izm-product-card__badge--sale">Sale</span>
+                {% endif %}
+
+                <button class="izm-product-card__quick-add" onclick="quickAdd(event, {{ product.variants.first.id }})">
+                  Añadir al carrito
+                </button>
+              </div>
+
+              <div class="izm-product-card__info">
+                {% if product.type != blank %}
+                  <p class="izm-product-card__category">{{ product.type }}</p>
+                {% endif %}
+                
+                <h3 class="izm-product-card__title">{{ product.title }}</h3>
+                
+                <div class="izm-product-card__price">
+                  <span class="izm-product-card__price-current {% if product.compare_at_price > product.price %}izm-product-card__price-sale{% endif %}">
+                    {{ product.price | money }}
+                  </span>
+                  {% if product.compare_at_price > product.price %}
+                    <span class="izm-product-card__price-original">
+                      {{ product.compare_at_price | money }}
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+
+        {%- comment -%} Pagination {%- endcomment -%}
+        {% if paginate.pages > 1 %}
+          <div class="izm-pagination">
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="izm-pagination__btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </a>
+            {% else %}
+              <button class="izm-pagination__btn" disabled>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+            {% endif %}
+
+            {% for part in paginate.parts %}
+              {% if part.is_link %}
+                <a href="{{ part.url }}" class="izm-pagination__btn">{{ part.title }}</a>
+              {% else %}
+                {% if part.title == '&hellip;' %}
+                  <span class="izm-pagination__dots">···</span>
+                {% else %}
+                  <span class="izm-pagination__btn izm-pagination__btn--active">{{ part.title }}</span>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="izm-pagination__btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </a>
+            {% else %}
+              <button class="izm-pagination__btn" disabled>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="izm-products__empty">
+          <h3 class="izm-products__empty-title">No hay productos en esta colección</h3>
+          <p class="izm-products__empty-text">Vuelve pronto para ver nuestras nuevas colecciones.</p>
+          <a href="/collections/all" class="btn btn-primary" style="margin-top: 1rem;">Ver todos los productos</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endpaginate %}
+
+<script>
+  function quickAdd(event, variantId) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: 1
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      fetch('/cart.js')
+        .then(res => res.json())
+        .then(cart => {
+          document.dispatchEvent(new CustomEvent('cart:update', { detail: { cart } }));
+          updateCartCount(cart.item_count);
+        });
+      
+      alert('Producto añadido al carrito');
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error al añadir al carrito');
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Izamarck Collection Grid",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 24,
+      "step": 4,
+      "default": 12,
+      "label": "Products per page"
+    }
+  ]
+}
+{% endschema %}
